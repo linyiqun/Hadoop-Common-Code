@@ -184,6 +184,7 @@ public class Balancer {
   private final double threshold;
   
   // all data node lists
+  //四种datanode节点类型
   private final Collection<Source> overUtilized = new LinkedList<Source>();
   private final Collection<Source> aboveAvgUtilized = new LinkedList<Source>();
   private final Collection<StorageGroup> belowAvgUtilized
@@ -211,6 +212,8 @@ public class Balancer {
    * builds the communication proxies to
    * namenode as a client and a secondary namenode and retry proxies
    * when connection fails.
+   * 
+   * 构造一个balancer均衡器,设置threshold值,读取配置中的分发线程数的值
    */
   Balancer(NameNodeConnector theblockpool, Parameters p, Configuration conf) {
     final long movedWinWidth = conf.getLong(
@@ -235,6 +238,9 @@ public class Balancer {
     this.policy = p.policy;
   }
   
+  /**
+   * 获取节点总容量大小
+   */ 
   private static long getCapacity(DatanodeStorageReport report, StorageType t) {
     long capacity = 0L;
     for(StorageReport r : report.getStorageReports()) {
@@ -244,7 +250,10 @@ public class Balancer {
     }
     return capacity;
   }
-
+  
+  /**
+   * 获取节点剩余可用容量大小 
+   */
   private static long getRemaining(DatanodeStorageReport report, StorageType t) {
     long remaining = 0L;
     for(StorageReport r : report.getStorageReports()) {
@@ -274,7 +283,6 @@ public class Balancer {
     }
     //计算出平均值
     policy.initAvgUtilization();
-
 
     long overLoadedBytes = 0L, underLoadedBytes = 0L;
     //进行使用率等级的划分,总共4种,over-utilized, above-average, below-average and under-utilized
@@ -400,6 +408,7 @@ public class Balancer {
      * below average utilized datanodes (targets).
      * Note only overutilized datanodes that haven't had that max bytes to move
      * satisfied in step 1 are selected
+     
      * 把over组的数据移动到below
      */
     chooseStorageGroups(overUtilized, belowAvgUtilized, matcher);
@@ -457,7 +466,6 @@ public class Balancer {
   
   /**
    * 根据源节点和目标节点,构造任务对
-   * 
    */
   private void matchSourceWithTargetToMove(Source source, StorageGroup target) {
     long size = Math.min(source.availableSizeToMove(), target.availableSizeToMove());
@@ -539,6 +547,7 @@ public class Balancer {
        * then initiates the move until all bytes are moved or no more block
        * available to move.
        * Exit no byte has been moved for 5 consecutive iterations.
+       *
        * 如果发现在5次连续的迭代中还是没有字节被移动,则退出
        */
       if (!dispatcher.dispatchAndCheckContinue()) {
@@ -565,6 +574,8 @@ public class Balancer {
    * For each iteration,
    * for each namenode,
    * execute a {@link Balancer} to work through all datanodes once.  
+   * 
+   * 开放给外部调用的run方法
    */
   static int run(Collection<URI> namenodes, final Parameters p,
       Configuration conf) throws IOException, InterruptedException {
