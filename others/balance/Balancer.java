@@ -142,6 +142,12 @@ import com.google.common.base.Preconditions;
  * <li>An IOException occurs while communicating with the namenode;
  * <li>Another balancer is running.
  * </ol>
+ * 下面5种情况会导致Balance操作的失败
+ * 1、整个集群已经达到平衡状态
+ * 2、经过计算发现没有可以被移动的block块
+ * 3、在连续5次的迭代中，没有block块被移动
+ * 4、当datanode节点与namenode节点通信的时候，发生IO异常
+ * 5、已经存在一个Balance操作
  * 
  * <p>Upon exit, a balancer returns an exit code and prints one of the 
  * following messages to the output file in corresponding to the above exit 
