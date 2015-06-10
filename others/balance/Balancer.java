@@ -153,6 +153,12 @@ import com.google.common.base.Preconditions;
  * <li>Received an IO exception: failure reason. Exiting...
  * <li>Another balancer is running. Exiting...
  * </ol>
+ * 在下面的5种情况下，balancer操作会自动退出
+ * 1、整个集群已经达到平衡的状态
+ * 2、经过计算发现没有可以被移动block块
+ * 3、在5论的迭代没有block被移动
+ * 4、接收端发生了I异常
+ * 5、已经存在一个balanr进程在工作
  * 
  * <p>The administrator can interrupt the execution of the balancer at any 
  * time by running the command "stop-balancer.sh" on the machine where the 
