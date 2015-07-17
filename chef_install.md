@@ -37,7 +37,7 @@ Node | 192.168.10.35 |
   service iptables save
   ```
   
-### 安装步骤
+### 具体安装步骤
 * 下载rpm安装包，例如chef-server-11.1.0-1.el6.x86_64.rpm,下载的方式可以从官网中下载，也可以用下面命令行的方式
   ```
   wget -c --no-check-certificate (rpm包url地址)
@@ -51,8 +51,9 @@ Node | 192.168.10.35 |
   ```
   chef-server-ctl reconfigure
   ```
-  
-* 执行成功后，浏览器内输入(https://192.168.10.191)，或者域名方式访问(https://chef.server.com)，会看到一个登陆界面，表明Chef Server已经安装成功
+
+### Chef Server安装结果验证
+执行成功后，浏览器内输入(https://192.168.10.191)，或者域名方式访问(https://chef.server.com)，会看到一个登陆界面，表明Chef Server已经安装成功
 用户名密码如，即可登系统(注意此时先不要急着改密码)
   ```
   username: admin
@@ -73,3 +74,43 @@ Node | 192.168.10.35 |
   192.168.10.191 chef.server.com
   ```
 
+###具体安装步骤
+* 如果worksation节点与che server节点是同在一个节点上的，无须拷贝admin.pem和chef-validator.pem私钥文件，如果不是同一节点则需要拷贝。考虑到集群规模的扩大，建议server节点与workstations节点分开部署，拷贝过程如下：
+  * 在chef-workstation节点上先创建/root/.chef目录,并将chef服务器上的/etc/chef-server/admin.pem和/etc/chef-server/chef-validator.pem文件拷贝到此目录。中
+  ```
+  mkdir ~/.chef
+  scp chef.example.com:/etc/chef-server/admin.pem ~/.chef
+  scp chef.example.com:/etc/chef-server/chef-validator.pem ~/.chef
+  ``` 
+注意：如在此过程前已经修改了server端的admin密码，则原有的/etc/chef-server/admin.pem将会失效，此时应到web ui页面上拷贝此时的admin的private key,在user栏目下点击generate private key,然后手动复制。
+
+
+* 执行knife configure -i命令进行初始化
+  ```
+  knife configure -i
+  ```
+  knife configure配置过程需要更改的配置:
+    * server URL修改为chef服务器的地址https://chef.server.com:443, 
+    * admin's private key路径改为/root/.chef/admin.pem
+    * validation key路径改为/root/.chef/chef-validation.pem
+    * chef repository地址输入/root/chef-repo
+    * 按照提示创建一个用户和密码
+  其余项保持默认值.
+* 配置ruby路径，chef默认集成了一个ruby的稳定版本,需修改PATH变量，保证chef集成的ruby被优先使用.
+  ```
+  vim ~/.bash_profile
+' export PATH="/opt/chef/embedded/bin:$PATH"'
+  source ~/.bash_profile
+  ```
+  
+### Workstation安装结果验证
+执行knife client list命令，返回client列表则配置成功.
+  ```
+  knife client list
+  ------------------------
+  chef-validator
+  chef-webui 
+  ```
+  在此过程中最易出错的还是admin.pem和chef-validator.pem中途拷贝验证的出错，注意拷贝前密码是否被修改。
+  
+## Chef Node的安装
