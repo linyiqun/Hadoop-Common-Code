@@ -116,7 +116,7 @@ Node | 192.168.10.35 |
 * 配置ruby路径，chef默认集成了一个ruby的稳定版本,需修改PATH变量，保证chef集成的ruby被优先使用.
   ```
   vim ~/.bash_profile
-' export PATH="/opt/chef/embedded/bin:$PATH"'
+  export PATH="/opt/chef/embedded/bin:$PATH"'
   source ~/.bash_profile
   ```
   
@@ -128,7 +128,8 @@ Node | 192.168.10.35 |
   chef-validator
   chef-webui 
   ```
-  在此过程中最易出错的还是admin.pem和chef-validator.pem中途拷贝验证的出错，注意拷贝前密码是否被修改。
+
+**注:在此过程中最易出错的还是admin.pem和chef-validator.pem中途拷贝验证的出错，注意拷贝前密码是否被修改。**
   
 ## 三.Chef Node的安装
 与Chef Server和Workstation只需一次安装不同的是，Chef Node的安装就是普通的客户端节点的安装，诸如以后的节添加等都是此类的方式，操作相对来讲简单了许多。
