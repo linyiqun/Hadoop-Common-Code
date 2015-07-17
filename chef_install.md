@@ -16,8 +16,8 @@ Node | 192.168.10.35 |
 版本不要选的太高，可能因为库版本不一致导致安装失败，而且错选安装系统类型也会导致某些文件不一致导致安装的失败。
 
 ## 一.Chef Serve的安装
-注:Chef Server需要安装在物理机上，在虚拟机节点上安装可能会导致rabbbq启动不起来，或者安装过程中出现阻塞现象，具体原因是虚拟机上的某些
-文件会覆盖真实系统的文件导致跑不起来。
+**注:Chef Server需要安装在物理机上，在虚拟机节点上安装可能会导致rabbbq启动不起来，或者安装过程中出现阻塞现象，具体原因是虚拟机上的某些文件会覆盖真实系统的文件导致跑不起来。**
+
 ### (1).Chef Server安装前需要做的
 * 配置主机名，因为后面的访很多都是以域名的方式访问
   ```
@@ -91,14 +91,14 @@ Node | 192.168.10.35 |
   ```
   
 * 如果worksation节点与che server节点是同在一个节点上的，无须拷贝admin.pem和chef-validator.pem私钥文件，如果不是同一节点则需要拷，拷贝过程如下(考虑到集群规模的扩大，建议server节点与workstations节点分开部署)：
-  * 在chef-workstation节点上先创建/root/.chef目录,并将chef服务器上的/etc/chef-server/admin.pem和/etc/chef-server/chef-validator.pem文件拷贝到此目录。中
+  * 在chef-workstation节点上先创建/root/.chef目录,并将chef服务器上的/etc/chef-server/admin.pem和/etc/chef-server/chef-validator.pem文件拷贝到此目录。
   ```
   mkdir ~/.chef
   scp chef.example.com:/etc/chef-server/admin.pem ~/.chef
   scp chef.example.com:/etc/chef-server/chef-validator.pem ~/.chef
   ``` 
   
-*注意：如在此过程前已经修改了server端的admin密码，则原有的/etc/chef-server/admin.pem将会失效，此时应到web ui页面上拷贝此时的admin的private key,在user栏目下点击generate private key,然后手动复制。*
+**注意：如在此过程前已经修改了server端的admin密码，则原有的/etc/chef-server/admin.pem将会失效，此时应到web ui页面上拷贝此时的admin的private key,在user栏目下点击generate private key,然后手动复制。**
 
 * 执行knife configure -i命令进行初始化
   ```
@@ -155,13 +155,13 @@ Node | 192.168.10.35 |
   knife bootstrap chef.node.com -x root -P 123456
   ```
   bootstrap操作就是将此节点注册到server的操作
-注：此时容易如果出现Connection Refused的错误，查看node机器ssh默认的端口号22是否被改写，如若改写进行添加端口操作，命令如下
+**注：此时容易如果出现Connection Refused的错误，查看node机器ssh默认的端口号22是否被改写，如若改写进行添加端口操作，命令如下**
   ```
   vim /etc/ssh/sshd_config
   #添加下面这行
   Port 22
-	/etc/init.d/sshd restart
-	```
+  /etc/init.d/sshd restart
+  ```
 	
 ### (2).Chef Node安装结果验证
   在workstation节点下执行下述命令
