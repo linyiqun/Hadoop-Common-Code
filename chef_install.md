@@ -47,6 +47,7 @@ Node | 192.168.10.35 |
   ```
   rpm -ivh chef-server-11.1.0-1.el6.x86_64.rpm
   ```
+  
 * 执行成功后，执行下面的配置命令
   ```
   chef-server-ctl reconfigure
@@ -144,6 +145,7 @@ Node | 192.168.10.35 |
   192.168.10.36 chef.workstation.com
   192.168.10.191 chef.server.com
   ```
+  
 * 安装chef-Client,下载好chef client rpm包，执行下面指令：
   ```
   rpm -ivh chef-11.10.0-1.el6.x86_64.rpm
@@ -155,6 +157,7 @@ Node | 192.168.10.35 |
   knife bootstrap chef.node.com -x root -P 123456
   ```
   bootstrap操作就是将此节点注册到server的操作
+  
 **注：此时容易如果出现Connection Refused的错误，查看node机器ssh默认的端口号22是否被改写，如若改写进行添加端口操作，命令如下**
   ```
   vim /etc/ssh/sshd_config
